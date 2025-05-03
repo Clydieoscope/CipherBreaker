@@ -9,42 +9,45 @@ public class SimpleSubstitutionCipherStrategy implements SearchingStrategy{
     Cipher cipher;
     private static String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     boolean debug = false;
-    int iteration;
+    int rounds;
+    static int DEFAULT = 5;
 
     public SimpleSubstitutionCipherStrategy(){
         this.cipher = new SimpleSubstitutionCipher();
-        this.iteration = 1;
+        this.rounds = DEFAULT;
     }
 
     public SimpleSubstitutionCipherStrategy(int i) {
-        this.iteration = i;
+        this.rounds = i;
         this.cipher = new SimpleSubstitutionCipher();
     }
 
     public SimpleSubstitutionCipherStrategy(Cipher simpleSubstitutionCipher) {
-        this.iteration = 1;
+        this.rounds = DEFAULT;
         this.cipher = simpleSubstitutionCipher;
     }
 
     public SimpleSubstitutionCipherStrategy(Cipher simpleSubstitutionCipher, int i) {
-        this.iteration = i;
+        this.rounds = i;
         this.cipher = simpleSubstitutionCipher;
     }
     @Override
-    public String searchKey(String cipherText, Tester tester, Analyzer analyzer) {
-        HashMap<String, Double> candidates = new HashMap<>();
+    public DecryptionResult searchKey(String cipherText, Tester tester, Analyzer analyzer) {
+        List<DecryptionResult> candidates = new ArrayList<>();
         String plainText, bestKey = "";
-        double fitness, bestFitness;
+        double fitness;
         char[] key;
         int count = 0;
         boolean improved;
 
-        while (count < iteration) {
+        DecryptionResult result = new DecryptionResult(cipherText, "", ALPHABET, Double.MAX_VALUE, "Simple Substitution Cipher");
+
+        while (count < rounds) {
             fitness = Double.MAX_VALUE;
-            bestFitness = Double.MAX_VALUE;
+            result.fitness = Double.MAX_VALUE;
             key = ALPHABET.toCharArray();
             shuffleKey(key);
-            System.out.println("NEW KEY: " + new String(key));
+            // System.out.println("NEW KEY: " + new String(key));
             improved = true;
 
             while (improved) {
@@ -56,12 +59,13 @@ public class SimpleSubstitutionCipherStrategy implements SearchingStrategy{
                         plainText = cipher.decrypt(cipherText, new String(key));
                         fitness = tester.getFitness(analyzer.countFrequencies(plainText));
 
-                        if (fitness < bestFitness) {
-                            bestFitness = fitness;
-                            bestKey = new String(key);
+                        if (fitness < result.fitness) {
+                            result.fitness = fitness;
+                            result.key = new String(key);
+                            result.plainText = plainText;
                             improved = true;
 
-                            if (debug) System.out.println("  Improved " + ++count + " time(s). Fitness: " + bestFitness + ".");
+                            if (debug) System.out.println("  Improved " + ++count + " time(s). Fitness: " + result.fitness + ".");
                         } else {
                             swapSymbol(key, i, j);
                         }
@@ -69,24 +73,21 @@ public class SimpleSubstitutionCipherStrategy implements SearchingStrategy{
                 }
             }
 
-            if (debug) System.out.println("Best key: " + bestKey + "\nFitness: " + bestFitness + "\n");
-            candidates.put(bestKey, bestFitness);
+            if (debug) System.out.println("Best key: " + result.key + "\nFitness: " + result.fitness + "\n");
+            candidates.add(new DecryptionResult(result));
             count++;
         }
 
         System.out.println("\nCANDIDATE KEYS");
-        bestFitness = Double.MAX_VALUE;
-        for (String k: candidates.keySet()) {
-            fitness = candidates.get(k);
-            System.out.println("Fitness: " + String.format("%.2f", fitness) + ", Key: " + k);
-            if (fitness < bestFitness) {
-                bestFitness = fitness;
-                bestKey = k;
+        result.fitness = Double.MAX_VALUE;
+        for (DecryptionResult r: candidates) {
+            System.out.println("Fitness: " + String.format("%.2f", r.fitness) + ", Key: " + r.key);
+            if (r.fitness < result.fitness) {
+                result = r;
             }
         }
 
-        System.out.println("\nFOUND KEY (Fitness: " + String.format("%.2f", bestFitness) + ", Key: " + bestKey + ")");
-        return bestKey;
+        return result;
     }
 
     private void swapSymbol(char[] key, int first, int second) {

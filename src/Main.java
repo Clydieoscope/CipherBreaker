@@ -1,8 +1,6 @@
 
 public class Main {
     public static void main(String[] args) {
-        String cipherText;
-
         String secret = "If he had anything confidential to say, he wrote it" +
                 " in cipher, that is, by so changing the order of " +
                 "the letters of the alphabet, that not a word could";
@@ -23,79 +21,64 @@ public class Main {
                 "its rhythm blending with the whispers of the wind. It was the kind of peaceful " +
                 "moment that made time feel like it had slowed, inviting reflection and quiet wonder.";
 
-        String war = "GBSXUCGSZQGKGSQPKQKGLSKASPCGBGBKGUKGCEUKUZKGGBSQEICACGK" +
-                "GCEUERWKLKUPKQQGCIICUAEUVSHQKGCEUPCGBCGQOEVSHUNSUGKUZCG" +
-                "QSNLSHEHIEEDCUOGEPKHZGBSNKCUGSUKUASERLSKASCUGBSLKACRCAC" +
-                "UZSSZEUSBEXHKRGSHWKLKUSQSKCHQTXKZHEUQBKZAENNSUASZFENFCU" +
-                "OCUEKBXGBSWKLKUSQSKNFKQQKZEHGEGBSXUCGSZQGKGSQKUZBCQAEII" +
-                "SKOXSZSICVSHSZGEGBSQSAHSGKHMERQGKGSKREHNKIHSLIMGEKHSASU" +
-                "GKNSHCAKUNSQQKOSPBCISGBCQHSLIMQGKGSZGBKGCGQSSNSZXQSISQQ" +
-                "GEAEUGCUXSGBSSJCQGCUOZCLIENKGCAUSOEGCKGCEUQCGAEUGKCUSZU" +
+        String war = "GBSXUCGSZQGKGSQPKQKGLSKASPCGBGBKGUKGCEUKUZKGGBSQEICACGK\n" +
+                "GCEUERWKLKUPKQQGCIICUAEUVSHQKGCEUPCGBCGQOEVSHUNSUGKUZCG\n" +
+                "QSNLSHEHIEEDCUOGEPKHZGBSNKCUGSUKUASERLSKASCUGBSLKACRCAC\n" +
+                "UZSSZEUSBEXHKRGSHWKLKUSQSKCHQTXKZHEUQBKZAENNSUASZFENFCU\n" +
+                "OCUEKBXGBSWKLKUSQSKNFKQQKZEHGEGBSXUCGSZQGKGSQKUZBCQAEII\n" +
+                "SKOXSZSICVSHSZGEGBSQSAHSGKHMERQGKGSKREHNKIHSLIMGEKHSASU\n" +
+                "GKNSHCAKUNSQQKOSPBCISGBCQHSLIMQGKGSZGBKGCGQSSNSZXQSISQQ\n" +
+                "GEAEUGCUXSGBSSJCQGCUOZCLIENKGCAUSOEGCKGCEUQCGAEUGKCUSZU\n" +
                 "EGBHSKGEHBCUGERPKHEHKHNSZKGGKAD";
 
-        String key;
-        SearchingContext sc = new SearchingContext(new CeasarCipherStrategy());
 
         // CEASAR CIPHER
 
-        /*
-        Cipher ceasarCipher = new CeasarCipher();
-        sc.setSearchingStrategy(new CeasarCipherStrategy(ceasarCipher));
-
-        cipherText = ceasarCipher.encrypt(secret, "13");
-        System.out.println("\nEncrypted with Key: " + "13" + "\n" +
-                "Ciphertext: " + wrapString(cipherText, 50));
-
-        key = sc.searchKey(cipherText);
-        System.out.println("\nDecrypted with Key: " + key + "\n" +
-                "Plaintext: " + wrapString(ceasarCipher.decrypt(cipherText, key), 50));
-         */
+        Cipher caesarCipher = new CaesarCipher();
+        testCipher(secret, "13", caesarCipher);
 
         // SIMPLE SUBSTITUTION CIPHER
 
         Cipher simpleSubCipher = new SimpleSubstitutionCipher();
-        sc.setSearchingStrategy(new SimpleSubstitutionCipherStrategy(simpleSubCipher,10));
 
-        cipherText = simpleSubCipher.encrypt(walrus, "DHPUWEBRYLKGZJFTAQXOVINSMC");
-        System.out.println("\nEncrypted with Key: " + "DHPUWEBRYLKGZJFTAQXOVINSMC" + "\n" +
-                "Plaintext: " + wrapString(cipherText, 50));
-
-        key = sc.searchKey(cipherText);
-        System.out.println("\nDecrypted with Key: " + key + "\n" +
-                "Plaintext: " + wrapString(simpleSubCipher.decrypt(cipherText, key), 50));
-
-        System.out.println("\nNo Encryption\n" +
-                "Plaintext: " + wrapString(walrus, 50));
-
-        key = sc.searchKey(walrus);
-        System.out.println("\nDecrypted with Key: " + key + "\n" +
-                "Plaintext: " + wrapString(simpleSubCipher.decrypt(walrus, key), 50));
-
-
-
-        System.out.println("\nEncrypted with Key: " + "some key" + "\n" +
-                "Plaintext: " + forceWrapString(war, 50));
-
-        key = sc.searchKey(war);
-        System.out.println("\nDecrypted with Key: " + key + "\n" +
-                "Plaintext: " + forceWrapString(simpleSubCipher.decrypt(war, key), 50));
-
+        testCipher(walrus, "DHPUWEBRYLKGZJFTAQXOVINSMC", simpleSubCipher);
+        testCipher(war, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", simpleSubCipher);
 
         // VIGENERE CIPHER
 
-        /*
         Cipher vigenereCipher = new VigenereCipher();
-        sc.setSearchingStrategy(new VigenereCipherStrategy(vigenereCipher));
+        testCipher(sun, "CAT", vigenereCipher);
 
-        cipherText = vigenereCipher.encrypt(sun, "CAT");
-        System.out.println("\nEncrypted with Key: " + "CAT" + "\n" +
-                "Plaintext: " + wrapString(cipherText, 50));
+        // UNKNOWN CIPHER
+        SearchingContext sc = new SearchingContext(new AllCiphersStrategy());
+        DecryptionResult result = sc.searchKey(war);
+        System.out.println("\nCipher used: " + result.cipher + "\n" +
+                "Decrypted with Key: " + result.key + "\n" +
+                "Fitness: " + result.fitness + "\n" +
+                "Plaintext: " + wrapString(result.plainText, 50));
+    }
 
-        key = sc.searchKey(cipherText);
-        System.out.println("\nDecrypted with Key: " + key + "\n" +
-                "Plaintext: " + wrapString(vigenereCipher.decrypt(cipherText, key), 50));
-        */
+    public static void testCipher(String plainText, String e_key, Cipher cipher) {
+        String cipherText;
+        DecryptionResult result;
+        SearchingContext sc = new SearchingContext();
 
+        if (cipher instanceof CaesarCipher) {
+            sc.setSearchingStrategy(new CaesarCipherStrategy(cipher));
+        } else if (cipher instanceof SimpleSubstitutionCipher) {
+            sc.setSearchingStrategy(new SimpleSubstitutionCipherStrategy(cipher));
+        } else if (cipher instanceof VigenereCipher) {
+            sc.setSearchingStrategy(new VigenereCipherStrategy(cipher));
+        }
+
+        cipherText = cipher.encrypt(plainText, e_key);
+        System.out.println("\nEncrypted with Key: " + e_key + "\n" +
+                "Ciphertext: " + wrapString(cipherText, 50));
+
+        result = sc.searchKey(cipherText);
+        System.out.println("\nDecrypted with Key: " + result.key + "\n" +
+                "Fitness: " + result.fitness + "\n" +
+                "Plaintext: " + wrapString(result.plainText, 50));
     }
 
     public static String wrapString(String input, int n) {
@@ -104,23 +87,6 @@ public class Main {
 
         for (char c : input.toCharArray()) {
             if (count > n && c == ' ') {
-                count = 0;
-                s.append("\n");
-            } else {
-                s.append(c);
-                count++;
-            }
-        }
-
-        return s.toString();
-    }
-
-    public static String forceWrapString(String input, int n) {
-        StringBuilder s = new StringBuilder();
-        int count = 0;
-
-        for (char c : input.toCharArray()) {
-            if (count > n) {
                 count = 0;
                 s.append("\n");
             } else {

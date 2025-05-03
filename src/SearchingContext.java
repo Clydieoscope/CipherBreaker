@@ -9,11 +9,26 @@ public class SearchingContext {
         this.analyzer = new Analyzer();
     }
 
+    public SearchingContext() {
+        this.tester = new Tester();
+        this.analyzer = new Analyzer();
+    }
+
     public void setSearchingStrategy(SearchingStrategy searchingStrategy) {
         this.searchingStrategy = searchingStrategy;
     }
 
-    public String searchKey(String cipherText) {
-        return searchingStrategy.searchKey(cipherText, tester, analyzer);
+    public DecryptionResult searchKey(String cipherText) {
+        try {
+            if (searchingStrategy != null) {
+                return searchingStrategy.searchKey(cipherText, tester, analyzer);
+            } else {
+                throw new IllegalStateException("Searching strategy is null.");
+            }
+        } catch (IllegalStateException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+
+        return null;
     }
 }

@@ -42,10 +42,12 @@ public class VigenereCipherStrategy implements SearchingStrategy {
     }
 
     @Override
-    public String searchKey(String cipherText, Tester tester, Analyzer analyzer) {
-        String plainText, bestKey = "";
-        double fitness, bestFitness = Double.MAX_VALUE;
+    public DecryptionResult searchKey(String cipherText, Tester tester, Analyzer analyzer) {
+        String plainText;
+        double fitness;
         char[] key;
+
+        DecryptionResult result = new DecryptionResult(cipherText, "", "", Double.MAX_VALUE, "Vigenere Cipher");
 
         for (int i=2; i < max; i++) {
             key = new char[i];
@@ -55,17 +57,17 @@ public class VigenereCipherStrategy implements SearchingStrategy {
                 plainText = cipher.decrypt(cipherText, new String(key));
                 fitness = tester.getFitness(analyzer.countFrequencies(plainText));
 
-                if (fitness < bestFitness) {
-                    bestFitness = fitness;
-                    bestKey = new String(key);
+                if (fitness < result.fitness) {
+                    result.fitness = fitness;
+                    result.key = new String(key);
+                    result.plainText = plainText;
 
-                    if (debug) System.out.println("Key: " + bestKey + " Fitness: " + bestFitness + ".");
+                    if (debug) System.out.println("Key: " + result.key + " Fitness: " + result.fitness + ".");
                 }
             }
         }
 
-        System.out.println("\nFOUND KEY (Fitness: " + String.format("%.2f", bestFitness) + ", Key: " + bestKey + ")");
-        return bestKey;
+        return result;
     }
 
     private static void nextKey(char[] key) {

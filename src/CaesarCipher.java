@@ -1,6 +1,6 @@
-public class CeasarCipher extends Cipher{
+public class CaesarCipher extends Cipher{
 
-    public CeasarCipher() {}
+    public CaesarCipher() {}
 
     @Override
     public String decrypt(String cipherText, String key) {
