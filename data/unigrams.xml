@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<letters>
+	<letter text="E" frequency="12.49"/>
+	<letter text="T" frequency="9.28"/>
+	<letter text="A" frequency="8.04"/>
+	<letter text="O" frequency="7.64"/>
+	<letter text="I" frequency="7.57"/>
+	<letter text="N" frequency="7.23"/>
+	<letter text="S" frequency="6.51"/>
+	<letter text="R" frequency="6.28"/>
+	<letter text="H" frequency="5.05"/>
+	<letter text="L" frequency="4.07"/>
+	<letter text="D" frequency="3.82"/>
+	<letter text="C" frequency="3.34"/>
+	<letter text="U" frequency="2.73"/>
+	<letter text="M" frequency="2.51"/>
+	<letter text="F" frequency="2.40"/>
+	<letter text="P" frequency="2.14"/>
+	<letter text="G" frequency="1.87"/>
+	<letter text="W" frequency="1.68"/>
+	<letter text="Y" frequency="1.66"/>
+	<letter text="B" frequency="1.48"/>
+	<letter text="V" frequency="1.05"/>
+	<letter text="K" frequency="0.54"/>
+	<letter text="X" frequency="0.23"/>
+	<letter text="J" frequency="0.16"/>
+	<letter text="Q" frequency="0.12"/>
+	<letter text="Z" frequency="0.09"/>
+</letters>
