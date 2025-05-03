@@ -69,7 +69,25 @@ public class Main {
                 "Plaintext: " + wrapString(vigenereCipher.decrypt(cipherText, key), 50));
 
     }
-/*
+
+    public static String wrapString(String input, int n) {
+        StringBuilder s = new StringBuilder();
+        int count = 0;
+
+        for (char c: input.toCharArray()) {
+            if (count > n && c == ' ') {
+                count = 0;
+                s.append("\n");
+            } else {
+                s.append(c);
+                count++;
+            }
+        }
+
+        return s.toString();
+    }
+
+    /*
     public static void testFitnessFunction (Cipher cipher, Tester tester) {
         String filePath = "data/eng_news_2005_10K-sentences.txt";
         double total = 0.0;
@@ -126,25 +144,5 @@ public class Main {
             System.err.println("Error reading file: " + e.getMessage());
         }
     }
-*/
-    public static String wrapString(String input, int n) {
-        StringBuilder s = new StringBuilder();
-        int count = 0;
-
-        for (char c: input.toCharArray()) {
-            if (count > n && c == ' ') {
-                count = 0;
-                s.append("\n");
-            } else {
-                s.append(c);
-                count++;
-            }
-        }
-
-        return s.toString();
-    }
-
-    public static String cleanString(String input) {
-        return input.replaceAll("[^a-zA-Z ]", "");
-    }
+    */
 }
