@@ -3,6 +3,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+
 public class SimpleSubstitutionCipherStrategy implements SearchingStrategy{
 
     Cipher cipher;
@@ -43,6 +44,7 @@ public class SimpleSubstitutionCipherStrategy implements SearchingStrategy{
             bestFitness = Double.MAX_VALUE;
             key = ALPHABET.toCharArray();
             shuffleKey(key);
+            System.out.println("NEW KEY: " + new String(key));
             improved = true;
 
             while (improved) {
@@ -51,7 +53,8 @@ public class SimpleSubstitutionCipherStrategy implements SearchingStrategy{
                 for (int i = 0; i < key.length; i++) {
                     for (int j = 0; j < key.length; j++) {
                         swapSymbol(key, i, j);
-                        fitness = tester.getFitness(analyzer.countFrequencies(cipher.decrypt(cipherText, new String(key))));
+                        plainText = cipher.decrypt(cipherText, new String(key));
+                        fitness = tester.getFitness(analyzer.countFrequencies(plainText));
 
                         if (fitness < bestFitness) {
                             bestFitness = fitness;
@@ -71,16 +74,18 @@ public class SimpleSubstitutionCipherStrategy implements SearchingStrategy{
             count++;
         }
 
+        System.out.println("\nCANDIDATE KEYS");
         bestFitness = Double.MAX_VALUE;
         for (String k: candidates.keySet()) {
             fitness = candidates.get(k);
+            System.out.println("Fitness: " + String.format("%.2f", fitness) + ", Key: " + k);
             if (fitness < bestFitness) {
                 bestFitness = fitness;
-                if (debug) System.out.println(k + ": " + fitness);
                 bestKey = k;
             }
         }
 
+        System.out.println("\nFOUND KEY (Fitness: " + String.format("%.2f", bestFitness) + ", Key: " + bestKey + ")");
         return bestKey;
     }
 

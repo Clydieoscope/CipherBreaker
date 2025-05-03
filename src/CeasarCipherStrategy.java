@@ -1,3 +1,5 @@
+
+
 public class CeasarCipherStrategy implements SearchingStrategy {
     Cipher cipher;
 
@@ -24,6 +26,7 @@ public class CeasarCipherStrategy implements SearchingStrategy {
             }
         }
 
+        System.out.println("\nFOUND KEY (Fitness: " + String.format("%.2f", bestFitness) + ", Key: " + bestKey + ")");
         return bestKey;
     }
 }

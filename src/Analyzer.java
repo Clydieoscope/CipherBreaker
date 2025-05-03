@@ -14,7 +14,7 @@ public class Analyzer {
 
 		for (int i=0; i<length; i++) {
 			char c = text.charAt(i);
-			if (c != ' ') {
+			if (Character.isLetter(c)) {
 				String unigram = String.valueOf(c);
 				unigramFrequency.computeIfPresent(unigram, (key, value) -> value + 1.0);
 				unigramFrequency.computeIfAbsent(unigram, k -> 1.0);
@@ -45,10 +45,8 @@ public class Analyzer {
 		double count = 0.0;
 
 		for (int i=0; i<length-1; i++) {
-			char c1 = text.charAt(i);
-			char c2 = text.charAt(i + 1);
-			if (c1 != ' ' && c2 != ' ') {
-				String bigram = String.valueOf(c1) + String.valueOf(c2);
+			String bigram = text.substring(i, i+2);
+			if (bigram.matches("[a-zA-Z]+")) {
 				bigramFrequency.computeIfPresent(bigram, (key, value) -> value + 1.0);
 				bigramFrequency.computeIfAbsent(bigram, k -> 1.0);
 				count++;
@@ -75,7 +73,7 @@ public class Analyzer {
 
 		for (int i=0; i<length-2; i++) {
 			String trigram = text.substring(i, i+3);
-			if (trigram.indexOf(' ') == -1) {
+			if (trigram.matches("[a-zA-Z]+")) {
 				trigramFrequency.computeIfPresent(trigram, (key, value) -> value + 1.0);
 				trigramFrequency.computeIfAbsent(trigram, k -> 1.0);
 				count++;

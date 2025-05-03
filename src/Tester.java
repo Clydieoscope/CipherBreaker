@@ -17,32 +17,31 @@ import org.xml.sax.SAXException;
 public class Tester {
 
 	boolean debug = false;
-	HashMap<String, Double> bigramFrequency_eng;
-	HashMap<String, Double> unigramFrequency_eng;
-	HashMap<String, Double> trigramFrequency_eng;
-	static double[] weight = {0.17, 0.33, 0.5};
+	ArrayList<HashMap<String, Double>> EnglishFrequencies;
+	static double[] weight = {0.075, 0.225, 0.7};
 	static String[] filePath = {"data/unigrams.xml", "data/bigrams.xml", "data/trigrams.xml"};
 	public Tester() {
-		this.bigramFrequency_eng = new HashMap<>();
-		this.unigramFrequency_eng = new HashMap<>();
-		this.trigramFrequency_eng = new HashMap<>();
-		
+		this.EnglishFrequencies = new ArrayList<>();
+
 		loadUnigrams();
 		loadBigrams();
 		loadTrigrams();
 		
 		if (debug) {
 			double sum=0;
-			
-			for (String i : bigramFrequency_eng.keySet()) {
-			      sum += bigramFrequency_eng.get(i);
+
+			HashMap<String, Double> bigramFrequency = EnglishFrequencies.get(1);
+			HashMap<String, Double> trigramFrequency = EnglishFrequencies.get(2);
+
+			for (String i : bigramFrequency.keySet()) {
+			      sum += bigramFrequency.get(i);
 			}
 			
 			System.out.println("Sum of English bigram frequencies: " + sum);
 
 			sum = 0.0;
-			for (String i : trigramFrequency_eng.keySet()) {
-				sum += trigramFrequency_eng.get(i);
+			for (String i : trigramFrequency.keySet()) {
+				sum += trigramFrequency.get(i);
 			}
 
 			System.out.println("Sum of English trigram frequencies: " + sum);
@@ -51,6 +50,8 @@ public class Tester {
 	}
 
 	private void loadUnigrams() {
+		HashMap<String, Double> unigramFrequency = new HashMap<>();
+
 		try {
 			File xmlFile = new File(filePath[0]);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -69,7 +70,7 @@ public class Tester {
 					String unigram = element.getAttribute("text");
 					double frequency = Double.parseDouble(element.getAttribute("frequency"));
 
-					unigramFrequency_eng.put(unigram, frequency);
+					unigramFrequency.put(unigram, frequency);
 				}
 			}
 
@@ -77,9 +78,13 @@ public class Tester {
 			e.printStackTrace();
 			System.out.println("Failed to load " + filePath[0]);
 		}
+
+		this.EnglishFrequencies.add(unigramFrequency);
 	}
 
 	private void loadBigrams(){
+		HashMap<String, Double> bigramFrequency = new HashMap<>();
+
 		try {
 			File xmlFile = new File(filePath[1]);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -98,7 +103,7 @@ public class Tester {
 					String bigram = element.getAttribute("text");
 					double frequency = Double.parseDouble(element.getAttribute("frequency"));
 
-					bigramFrequency_eng.put(bigram, frequency);
+					bigramFrequency.put(bigram, frequency);
 				}
 			}
 
@@ -106,9 +111,13 @@ public class Tester {
 			e.printStackTrace();
 			System.out.println("Failed to load " + filePath[1]);
 		}
+
+		this.EnglishFrequencies.add(bigramFrequency);
 	}
 
 	private void loadTrigrams(){
+		HashMap<String, Double> trigramFrequency_eng = new HashMap<>();
+
 		try {
 			File xmlFile = new File(filePath[2]);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -135,24 +144,20 @@ public class Tester {
 			e.printStackTrace();
 			System.out.println("Failed to load " + filePath[2]);
 		}
+
+		this.EnglishFrequencies.add(trigramFrequency_eng);
 	}
 
 	public double getFitness(ArrayList<HashMap<String, Double>> frequencies) {
-		HashMap<String, Double> bigramFrequency = frequencies.get(0);
-		HashMap<String, Double> unigramFrequency = frequencies.get(1);
-		HashMap<String, Double> trigramFrequency = frequencies.get(2);
 		double fitness = 0;
-		
-		for (String i : unigramFrequency.keySet()) {
-			fitness += weight[0] * Math.abs(unigramFrequency_eng.getOrDefault(i, 0.0) - unigramFrequency.get(i));
-		}
-		
-		for (String i : bigramFrequency.keySet()) {
-			fitness += weight[1] * Math.abs(bigramFrequency_eng.getOrDefault(i, 0.0) - bigramFrequency.get(i));
-		}
 
-		for (String i : trigramFrequency.keySet()) {
-			fitness += weight[2] * Math.abs(trigramFrequency_eng.getOrDefault(i, 0.0) - trigramFrequency.get(i));
+
+		for (int i=0; i<frequencies.size(); i++) {
+			HashMap<String, Double> f = frequencies.get(i);
+
+			for (String k: f.keySet()) {
+				fitness += weight[i] * Math.abs(f.get(k) - EnglishFrequencies.get(i).getOrDefault(k, 0.0));
+			}
 		}
 		
 		return fitness;

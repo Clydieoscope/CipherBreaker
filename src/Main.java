@@ -1,10 +1,3 @@
-import java.awt.*;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -30,18 +23,35 @@ public class Main {
                 "its rhythm blending with the whispers of the wind. It was the kind of peaceful " +
                 "moment that made time feel like it had slowed, inviting reflection and quiet wonder.";
 
+        String war = "GBSXUCGSZQGKGSQPKQKGLSKASPCGBGBKGUKGCEUKUZKGGBSQEICACGK" +
+                "GCEUERWKLKUPKQQGCIICUAEUVSHQKGCEUPCGBCGQOEVSHUNSUGKUZCG" +
+                "QSNLSHEHIEEDCUOGEPKHZGBSNKCUGSUKUASERLSKASCUGBSLKACRCAC" +
+                "UZSSZEUSBEXHKRGSHWKLKUSQSKCHQTXKZHEUQBKZAENNSUASZFENFCU" +
+                "OCUEKBXGBSWKLKUSQSKNFKQQKZEHGEGBSXUCGSZQGKGSQKUZBCQAEII" +
+                "SKOXSZSICVSHSZGEGBSQSAHSGKHMERQGKGSKREHNKIHSLIMGEKHSASU" +
+                "GKNSHCAKUNSQQKOSPBCISGBCQHSLIMQGKGSZGBKGCGQSSNSZXQSISQQ" +
+                "GEAEUGCUXSGBSSJCQGCUOZCLIENKGCAUSOEGCKGCEUQCGAEUGKCUSZU" +
+                "EGBHSKGEHBCUGERPKHEHKHNSZKGGKAD";
+
+        String key;
+        SearchingContext sc = new SearchingContext(new CeasarCipherStrategy());
+
+        // CEASAR CIPHER
+
+        /*
         Cipher ceasarCipher = new CeasarCipher();
-        SearchingContext sc = new SearchingContext(new CeasarCipherStrategy(ceasarCipher));
+        sc.setSearchingStrategy(new CeasarCipherStrategy(ceasarCipher));
 
         cipherText = ceasarCipher.encrypt(secret, "13");
         System.out.println("\nEncrypted with Key: " + "13" + "\n" +
                 "Ciphertext: " + wrapString(cipherText, 50));
 
-        String key = sc.searchKey(cipherText);
+        key = sc.searchKey(cipherText);
         System.out.println("\nDecrypted with Key: " + key + "\n" +
                 "Plaintext: " + wrapString(ceasarCipher.decrypt(cipherText, key), 50));
+         */
 
-
+        // SIMPLE SUBSTITUTION CIPHER
 
         Cipher simpleSubCipher = new SimpleSubstitutionCipher();
         sc.setSearchingStrategy(new SimpleSubstitutionCipherStrategy(simpleSubCipher,10));
@@ -54,8 +64,26 @@ public class Main {
         System.out.println("\nDecrypted with Key: " + key + "\n" +
                 "Plaintext: " + wrapString(simpleSubCipher.decrypt(cipherText, key), 50));
 
+        System.out.println("\nNo Encryption\n" +
+                "Plaintext: " + wrapString(walrus, 50));
+
+        key = sc.searchKey(walrus);
+        System.out.println("\nDecrypted with Key: " + key + "\n" +
+                "Plaintext: " + wrapString(simpleSubCipher.decrypt(walrus, key), 50));
 
 
+
+        System.out.println("\nEncrypted with Key: " + "some key" + "\n" +
+                "Plaintext: " + forceWrapString(war, 50));
+
+        key = sc.searchKey(war);
+        System.out.println("\nDecrypted with Key: " + key + "\n" +
+                "Plaintext: " + forceWrapString(simpleSubCipher.decrypt(war, key), 50));
+
+
+        // VIGENERE CIPHER
+
+        /*
         Cipher vigenereCipher = new VigenereCipher();
         sc.setSearchingStrategy(new VigenereCipherStrategy(vigenereCipher));
 
@@ -64,9 +92,9 @@ public class Main {
                 "Plaintext: " + wrapString(cipherText, 50));
 
         key = sc.searchKey(cipherText);
-        System.out.println(key);
         System.out.println("\nDecrypted with Key: " + key + "\n" +
                 "Plaintext: " + wrapString(vigenereCipher.decrypt(cipherText, key), 50));
+        */
 
     }
 
@@ -74,8 +102,25 @@ public class Main {
         StringBuilder s = new StringBuilder();
         int count = 0;
 
-        for (char c: input.toCharArray()) {
+        for (char c : input.toCharArray()) {
             if (count > n && c == ' ') {
+                count = 0;
+                s.append("\n");
+            } else {
+                s.append(c);
+                count++;
+            }
+        }
+
+        return s.toString();
+    }
+
+    public static String forceWrapString(String input, int n) {
+        StringBuilder s = new StringBuilder();
+        int count = 0;
+
+        for (char c : input.toCharArray()) {
+            if (count > n) {
                 count = 0;
                 s.append("\n");
             } else {

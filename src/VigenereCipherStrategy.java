@@ -52,7 +52,8 @@ public class VigenereCipherStrategy implements SearchingStrategy {
             Arrays.fill(key, 'A');
             while(hasNext(key)) {
                 nextKey(key);
-                fitness = tester.getFitness(analyzer.countFrequencies(cipher.decrypt(cipherText, new String(key))));
+                plainText = cipher.decrypt(cipherText, new String(key));
+                fitness = tester.getFitness(analyzer.countFrequencies(plainText));
 
                 if (fitness < bestFitness) {
                     bestFitness = fitness;
@@ -63,6 +64,7 @@ public class VigenereCipherStrategy implements SearchingStrategy {
             }
         }
 
+        System.out.println("\nFOUND KEY (Fitness: " + String.format("%.2f", bestFitness) + ", Key: " + bestKey + ")");
         return bestKey;
     }
 
